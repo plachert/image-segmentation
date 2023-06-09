@@ -38,7 +38,7 @@ class ExpansionBlock(nn.Module):
 
 
 class UNet(nn.Module):
-    def __init__(self):
+    def __init__(self, n_classes=22):
         super().__init__()
         self.level1_down = ContractionBlock(input_chans=3, output_chans=64)
         self.level2_down = ContractionBlock(input_chans=64, output_chans=128)
@@ -49,7 +49,7 @@ class UNet(nn.Module):
         self.level3_up = ExpansionBlock(input_chans=512, output_chans=256)
         self.level2_up = ExpansionBlock(input_chans=256, output_chans=128)
         self.level1_up = ExpansionBlock(input_chans=128, output_chans=64)
-        self.reduce_channels = nn.Conv2d(64, 1, (1, 1))
+        self.reduce_channels = nn.Conv2d(64, n_classes, (1, 1))
         
     def forward(self, image):
         # Contraction
@@ -71,4 +71,4 @@ class UNet(nn.Module):
 if __name__ == "__main__":
     a = torch.rand(1, 3, 224 ,224)
     m = UNet()
-    m(a).shape
+    print(m(a).shape)

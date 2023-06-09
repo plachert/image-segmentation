@@ -25,14 +25,29 @@ class VOCDatamodule(L.LightningDataModule):
         self.train_batch_size = train_batch_size
         self.val_batch_size = val_batch_size
         self.test_batch_size = test_batch_size
+        self.num_workers = num_workers
 
     def prepare_data(self):
         # download
         VOCSegmentation(self.data_dir, image_set="trainval", download=True, year='2012')
 
     def setup(self, stage: str):
-        self.train_ds = VOCSegmentation(self.data_dir, image_set="train", download=False, year='2012')
-        val_org = VOCSegmentation(self.data_dir, image_set="val", download=False, year='2012')
+        self.train_ds = VOCSegmentation(
+            self.data_dir,
+            transform=self.input_transform,
+            target_transform=self.target_transform,
+            image_set="train", 
+            download=False, 
+            year='2012',
+            )
+        val_org = VOCSegmentation(
+            self.data_dir,
+            transform=self.input_transform,
+            target_transform=self.target_transform,
+            image_set="val", 
+            download=False, 
+            year='2012',
+            )
         new_val_size = len(val_org) // 2
         test_size = len(val_org) - new_val_size
         self.val_ds, self.test_ds = random_split(val_org, [new_val_size, test_size])
