@@ -22,6 +22,13 @@ class SegmentationModel(L.LightningModule):
         self.log("train/loss", loss)
         return loss
     
+    def validation_step(self, batch, batch_idx):
+        image, y = batch
+        y_hat = self(image)
+        loss = F.cross_entropy(y_hat, y)
+        self.log("val/loss", loss)
+        return loss
+    
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
         

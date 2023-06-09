@@ -1,4 +1,5 @@
 from lightning import Trainer
+from lightning.pytorch import loggers as pl_loggers
 from model.model import SegmentationModel
 from model.architectures.unet import UNet
 from data.datamodule import VOCDatamodule
@@ -25,7 +26,9 @@ def main():
     )
     datamodule = VOCDatamodule(input_transform=input_transform, target_transform=target_transform)
     model = SegmentationModel(UNet())
-    trainer = Trainer(max_epochs=1, accelerator='gpu')
+    
+    tb_logger = pl_loggers.TensorBoardLogger(save_dir="logs/")
+    trainer = Trainer(max_epochs=1, accelerator='gpu', logger=tb_logger)
     trainer.fit(model, datamodule)
 
 if __name__ == "__main__":
