@@ -1,3 +1,5 @@
+"""This module provides implementation of a modified U-Net architecture."""
+
 import torch
 import torch.nn as nn
 

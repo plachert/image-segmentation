@@ -1,3 +1,5 @@
+"""This module provides a LightningModule for segmentation."""
+
 import lightning as L
 import torch
 import torch.nn as nn
