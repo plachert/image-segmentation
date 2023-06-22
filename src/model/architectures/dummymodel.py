@@ -9,10 +9,12 @@ class DummyModel(nn.Module):
         super().__init__()
         self.multiply = nn.Parameter(torch.rand(3, 224, 224), requires_grad=True)
         self.add = nn.Parameter(torch.rand(3, 224, 224), requires_grad=True)
+        self.classify = nn.Conv2d(3, 22, (1, 1))
         
         
     def forward(self, image):
-        return torch.mul(self.multiply, image) + self.add
+        out = torch.mul(self.multiply, image) + self.add
+        return self.classify(out)
     
     
 if __name__ == "__main__":

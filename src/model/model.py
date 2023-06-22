@@ -63,7 +63,7 @@ class SegmentationModel(L.LightningModule):
     
     
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.0005)
+        return torch.optim.Adam(self.parameters(), lr=0.01)
         
 
 
