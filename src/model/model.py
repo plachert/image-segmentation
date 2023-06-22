@@ -1,3 +1,5 @@
+"""This module provides a LightningModule for segmentation."""
+
 import lightning as L
 import torch
 import torch.nn as nn
@@ -29,7 +31,8 @@ class SegmentationModel(L.LightningModule):
         y_hat = self(image)
         loss = F.cross_entropy(y_hat, y)
         self.log("train/loss", loss, on_epoch=True)
-        self.training_step_outputs.append((self._get_segmentation_mask(y_hat), y))
+        segmentation_mask = self._get_segmentation_mask(y_hat).detach()
+        self.training_step_outputs.append((segmentation_mask, y.detach()))
         return loss
     
     def validation_step(self, batch, batch_idx):
@@ -37,31 +40,32 @@ class SegmentationModel(L.LightningModule):
         y_hat = self(image)
         loss = F.cross_entropy(y_hat, y)
         self.log("val/loss", loss, on_epoch=True)
-        self.validation_step_outputs.append((self._get_segmentation_mask(y_hat), y))
+        segmentation_mask = self._get_segmentation_mask(y_hat).detach()
+        self.validation_step_outputs.append((segmentation_mask, y.detach()))
         return loss
     
     def on_train_epoch_end(self):
         tensorboard = self.logger.experiment
-        example = self.training_step_outputs[0][0]
+        example = self.training_step_outputs[0][0].cpu().numpy()
         fig = plt.figure(figsize=(10, 10))
-        plt.imshow(example.cpu().detach().numpy()[0, :, :])
+        plt.imshow(example[0, :, :])
         image = fig2png(fig)
         tensorboard.add_image("test", image, self.current_epoch, dataformats="HWC")
         self.training_step_outputs.clear()
     
-    # def on_validation_epoch_end(self):
-    #     tensorboard = self.logger.experiment
-    #     example = self.validation_step_outputs[0][0]
-    #     fig = plt.figure(figsize=(10, 10))
-    #     plt.imshow(example.cpu().detach().numpy()[0, :, :])
-    #     image = fig2png(fig)
-    #     tensorboard.add_image("test", image, self.current_epoch, dataformats="HWC")
-    #     self.validation_step_outputs.clear()
+    def on_validation_epoch_end(self):
+        tensorboard = self.logger.experiment
+        example = self.validation_step_outputs[0][0].cpu().numpy()
+        fig = plt.figure(figsize=(10, 10))
+        plt.imshow(example[0, :, :])
+        image = fig2png(fig)
+        tensorboard.add_image("test", image, self.current_epoch, dataformats="HWC")
+        self.validation_step_outputs.clear()
         
     
     
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.0005)
+        return torch.optim.Adam(self.parameters(), lr=0.01)
         
 
 

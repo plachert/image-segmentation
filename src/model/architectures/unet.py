@@ -1,3 +1,5 @@
+"""This module provides implementation of a modified U-Net architecture."""
+
 import torch
 import torch.nn as nn
 
@@ -6,10 +8,12 @@ class ContractionBlock(nn.Module):
     def __init__(self, input_chans=3, output_chans=64):
         super().__init__()
         self.conv_relu = nn.Sequential(
-            nn.Conv2d(input_chans, output_chans, (3, 3), padding=1),
-            nn.ReLU(),
-            nn.Conv2d(output_chans, output_chans, (3, 3), padding=1),
-            nn.ReLU(),
+            nn.Conv2d(input_chans, output_chans, (3, 3), padding=1, bias=False),
+            nn.BatchNorm2d(output_chans),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(output_chans, output_chans, (3, 3), padding=1, bias=False),
+            nn.BatchNorm2d(output_chans),
+            nn.ReLU(inplace=True),
         )
         self.maxpool = nn.MaxPool2d((2, 2), stride=2)
         
@@ -24,10 +28,12 @@ class ExpansionBlock(nn.Module):
         super().__init__()
         self.upsample = nn.ConvTranspose2d(input_chans, output_chans, (4, 4), stride=2, padding=1)
         self.conv_relu = nn.Sequential(
-            nn.Conv2d(input_chans, output_chans, (3, 3), padding=1),
-            nn.ReLU(),
-            nn.Conv2d(output_chans, output_chans, (3, 3), padding=1),
-            nn.ReLU(),
+            nn.Conv2d(input_chans, output_chans, (3, 3), padding=1, bias=False),
+            nn.BatchNorm2d(output_chans),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(output_chans, output_chans, (3, 3), padding=1, bias=False),
+            nn.BatchNorm2d(output_chans),
+            nn.ReLU(inplace=True),
         )
         
     def forward(self, copy, image):
