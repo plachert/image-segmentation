@@ -29,10 +29,10 @@ def main():
         
     )
     datamodule = VOCDatamodule(input_transform=input_transform, target_transform=target_transform)
-    model = SegmentationModel(DummyModel())
+    model = SegmentationModel(UNet())
     
     tb_logger = pl_loggers.TensorBoardLogger(save_dir="logs/")
-    trainer = Trainer(max_epochs=500, accelerator='gpu', logger=tb_logger, overfit_batches=1)
+    trainer = Trainer(max_epochs=500, accelerator='gpu', logger=tb_logger)
     trainer.fit(model, datamodule)
 
 if __name__ == "__main__":

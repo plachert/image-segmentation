@@ -13,9 +13,9 @@ class VOCDatamodule(L.LightningDataModule):
         data_dir: pathlib.Path = VOC_PATH,
         input_transform: Optional[Callable] = None,
         target_transform: Optional[Callable] = None,
-        train_batch_size: int = 1,
+        train_batch_size: int = 32,
         val_batch_size: int = 1,
-        test_batch_size: int = 32,
+        test_batch_size: int = 1,
         num_workers: int = 2,
         ):
         super().__init__()
