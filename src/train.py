@@ -16,18 +16,19 @@ def replace_tensor_value_(tensor, a, b):
 
 def main():
     # mean of the imagenet dataset for normalizing
-    imagenet_mean = [0.485, 0.456, 0.406]
-    imagenet_std = [0.229, 0.224, 0.225]
+    imagenet_mean = [0., 0., 0.]  # [0.485, 0.456, 0.406]
+    imagenet_std = [1., 1., 1.]  # [0.229, 0.224, 0.225]
     input_transform = transforms.Compose(
         [
-            transforms.Resize((224, 224)),
+            transforms.Resize((160, 160)),
             transforms.ToTensor(),
             transforms.Normalize(imagenet_mean, imagenet_std),
+            transforms.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 5)),
         ],
     )
     target_transform = transforms.Compose(
         [
-            transforms.Resize((224, 224)),
+            transforms.Resize((160, 160)),
             transforms.PILToTensor(),
             transforms.Lambda(
                 lambda x: replace_tensor_value_(

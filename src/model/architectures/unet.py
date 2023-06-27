@@ -73,20 +73,38 @@ class ExpansionBlock(nn.Module):
 
 
 class UNet(nn.Module):
+
     def __init__(self, n_classes=22):
+        feats = [32, 64, 128, 256, 512]
         super().__init__()
-        self.level1_down = ContractionBlock(input_chans=3, output_chans=64)
-        self.level2_down = ContractionBlock(input_chans=64, output_chans=128)
-        self.level3_down = ContractionBlock(input_chans=128, output_chans=256)
-        self.level4_down = ContractionBlock(input_chans=256, output_chans=512)
+        self.level1_down = ContractionBlock(
+            input_chans=3, output_chans=feats[0],
+        )
+        self.level2_down = ContractionBlock(
+            input_chans=feats[0], output_chans=feats[1],
+        )
+        self.level3_down = ContractionBlock(
+            input_chans=feats[1], output_chans=feats[2],
+        )
+        self.level4_down = ContractionBlock(
+            input_chans=feats[2], output_chans=feats[3],
+        )
         self.bottom = ContractionBlock(
-            input_chans=512, output_chans=1024,
+            input_chans=feats[3], output_chans=feats[4],
         )  # TODO: unused maxpool here
-        self.level4_up = ExpansionBlock(input_chans=1024, output_chans=512)
-        self.level3_up = ExpansionBlock(input_chans=512, output_chans=256)
-        self.level2_up = ExpansionBlock(input_chans=256, output_chans=128)
-        self.level1_up = ExpansionBlock(input_chans=128, output_chans=64)
-        self.reduce_channels = nn.Conv2d(64, n_classes, (1, 1))
+        self.level4_up = ExpansionBlock(
+            input_chans=feats[4], output_chans=feats[3],
+        )
+        self.level3_up = ExpansionBlock(
+            input_chans=feats[3], output_chans=feats[2],
+        )
+        self.level2_up = ExpansionBlock(
+            input_chans=feats[2], output_chans=feats[1],
+        )
+        self.level1_up = ExpansionBlock(
+            input_chans=feats[1], output_chans=feats[0],
+        )
+        self.reduce_channels = nn.Conv2d(feats[0], n_classes, (1, 1))
 
     def forward(self, image):
         # Contraction

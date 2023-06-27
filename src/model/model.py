@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import lightning as L
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -48,22 +49,27 @@ class SegmentationModel(L.LightningModule):
     def on_train_epoch_end(self):
         tensorboard = self.logger.experiment
         example = self.training_step_outputs[0][0].cpu().numpy()
-        fig = plt.figure(figsize=(10, 10))
-        plt.imshow(example[0, :, :])
+
+        fig, axs = plt.subplots(4, 4, figsize=(10, 10))
+        axs = np.ravel(axs)
+        for i, ax in enumerate(axs):
+            ax.imshow(example[i, :, :], vmin=0, vmax=21)
         image = fig2png(fig)
         tensorboard.add_image(
-            'test', image, self.current_epoch, dataformats='HWC',
+            'test_train', image, self.current_epoch, dataformats='HWC',
         )
         self.training_step_outputs.clear()
 
     def on_validation_epoch_end(self):
         tensorboard = self.logger.experiment
         example = self.validation_step_outputs[0][0].cpu().numpy()
-        fig = plt.figure(figsize=(10, 10))
-        plt.imshow(example[0, :, :])
+        fig, axs = plt.subplots(4, 4, figsize=(10, 10))
+        axs = np.ravel(axs)
+        for i, ax in enumerate(axs):
+            ax.imshow(example[i, :, :], vmin=0, vmax=21)
         image = fig2png(fig)
         tensorboard.add_image(
-            'test', image, self.current_epoch, dataformats='HWC',
+            'test_val', image, self.current_epoch, dataformats='HWC',
         )
         self.validation_step_outputs.clear()
 
