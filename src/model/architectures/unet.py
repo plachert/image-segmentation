@@ -1,23 +1,33 @@
 """This module provides implementation of a modified U-Net architecture."""
 from __future__ import annotations
 
+from functools import partial
+
 import torch
 import torch.nn as nn
+
+same_conv2d = partial(
+    nn.Conv2d,
+    kernel_size=3,
+    stride=1,
+    padding=1,
+    bias=False,
+)
 
 
 class ContractionBlock(nn.Module):
     def __init__(self, input_chans=3, output_chans=64):
         super().__init__()
         self.conv_relu = nn.Sequential(
-            nn.Conv2d(
-                input_chans, output_chans,
-                (3, 3), padding=1, bias=False,
+            same_conv2d(
+                input_chans,
+                output_chans,
             ),
             nn.BatchNorm2d(output_chans),
             nn.ReLU(inplace=True),
-            nn.Conv2d(
-                output_chans, output_chans,
-                (3, 3), padding=1, bias=False,
+            same_conv2d(
+                output_chans,
+                output_chans,
             ),
             nn.BatchNorm2d(output_chans),
             nn.ReLU(inplace=True),
@@ -34,18 +44,22 @@ class ExpansionBlock(nn.Module):
     def __init__(self, input_chans=1024, output_chans=512):
         super().__init__()
         self.upsample = nn.ConvTranspose2d(
-            input_chans, output_chans, (4, 4), stride=2, padding=1,
+            input_chans,
+            output_chans,
+            kernel_size=4,
+            stride=2,
+            padding=1,
         )
         self.conv_relu = nn.Sequential(
-            nn.Conv2d(
-                input_chans, output_chans,
-                (3, 3), padding=1, bias=False,
+            same_conv2d(
+                input_chans,
+                output_chans,
             ),
             nn.BatchNorm2d(output_chans),
             nn.ReLU(inplace=True),
-            nn.Conv2d(
-                output_chans, output_chans,
-                (3, 3), padding=1, bias=False,
+            same_conv2d(
+                output_chans,
+                output_chans,
             ),
             nn.BatchNorm2d(output_chans),
             nn.ReLU(inplace=True),
