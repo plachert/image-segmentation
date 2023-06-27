@@ -32,7 +32,7 @@ class ContractionBlock(nn.Module):
             nn.BatchNorm2d(output_chans),
             nn.ReLU(inplace=True),
         )
-        self.maxpool = nn.MaxPool2d((2, 2), stride=2)
+        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
 
     def forward(self, image):
         copy = self.conv_relu(image)
