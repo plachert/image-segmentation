@@ -16,12 +16,12 @@ class VOCDatamodule(SegmentationDataModule):
 
     def setup(self, stage: str):
         self.train_ds = VOCSegmentationDataset(
-            transform=self.transform,
+            transform=self.train_transform,
             image_set='train',
             download=False,
         )
         val_org = VOCSegmentationDataset(
-            transform=self.transform,
+            transform=self.inference_transform,
             image_set='val',
             download=False,
         )

@@ -74,8 +74,8 @@ class ExpansionBlock(nn.Module):
 
 class UNet(nn.Module):
 
-    def __init__(self, n_classes=22):
-        feats = [32, 64, 128, 256, 512]
+    def __init__(self, n_classes=21):
+        feats = [64, 128, 256, 512, 1024]
         super().__init__()
         self.level1_down = ContractionBlock(
             input_chans=3, output_chans=feats[0],

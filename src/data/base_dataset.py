@@ -44,7 +44,7 @@ class SegmentationDataset(Dataset, ABC):
         return {'image': image, 'mask': mask}
 
     def _load_image(self, path: pathlib.Path) -> np.ndarray:
-        'Load image from path.'
+        """Load image from path."""
 
     def _load_mask(self, path: pathlib.Path) -> np.ndarray:
-        'Load mask from path.'
+        """Load mask from path."""
