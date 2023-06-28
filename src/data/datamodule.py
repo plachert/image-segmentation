@@ -84,3 +84,15 @@ class VOCDatamodule(L.LightningDataModule):
             batch_size=self.test_batch_size,
             num_workers=self.num_workers,
         )
+
+
+if __name__ == '__main__':
+    ds = VOCSegmentation(
+        VOC_PATH,
+        transform=None,
+        target_transform=None,
+        image_set='train',
+        download=False,
+        year='2012',
+    )
+    print(ds.masks[0])
