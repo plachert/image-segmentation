@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 # ignore datasets
-data
+/data
 
 # ignore lightning logs
-logs
+/logs

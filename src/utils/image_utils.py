@@ -6,6 +6,34 @@ import io
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+from PIL import ImagePalette
+
+PALETTE = ImagePalette.ImagePalette(
+    'RGB',
+    [
+        0, 0, 0,
+        128, 0, 0,
+        0, 128, 0,
+        128, 128, 0,
+        0, 0, 128,
+        128, 0, 128,
+        0, 128, 128,
+        128, 128, 128,
+        64, 0, 0,
+        192, 0, 0,
+        64, 128, 0,
+        192, 128, 0,
+        64, 0, 128,
+        192, 0, 128,
+        64, 128, 128,
+        192, 128, 128,
+        0, 64, 0,
+        128, 64, 0,
+        0, 192, 0,
+        128, 192, 0,
+        0, 64, 128,
+    ],
+)
 
 
 def blend_with_mask(image: Image.Image, mask: Image.Image, alpha=0.4):
@@ -29,3 +57,12 @@ def fig2png(fig):
     png = buf.getvalue()
     decoded_png = np.array(Image.open(io.BytesIO(png)))
     return decoded_png
+
+
+def plot_segmentation(image: np.array, mask: np.array, ax: plt.Axes):
+    """Plot segmentation mask on image."""
+    image = Image.fromarray(image.astype(np.uint8))
+    mask = Image.fromarray(mask.astype(np.uint8))
+    mask.putpalette(PALETTE)
+    blended = blend_with_mask(image, mask, alpha=0.7)
+    ax.imshow(blended)
