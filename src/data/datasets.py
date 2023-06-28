@@ -68,7 +68,6 @@ class VOCSegmentationDataset(SegmentationDataset):
 
     def _load_mask(self, path: pathlib.Path) -> np.ndarray:
         mask = np.array(Image.open(path), dtype=np.float32)
-        # mask = np.expand_dims(mask, axis=-1)
         mask_without_border = np.where(mask == 255., 0, mask)
         one_hot = np.eye(self.no_classes)[
             mask_without_border.astype(int)
