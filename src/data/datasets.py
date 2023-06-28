@@ -64,7 +64,7 @@ class VOCSegmentationDataset(SegmentationDataset):
 
     def _load_image(self, path: pathlib.Path) -> np.ndarray:
         image = np.array(Image.open(path), dtype=np.float32)
-        print(image.shape)
+        return image
 
     def _load_mask(self, path: pathlib.Path) -> np.ndarray:
         mask = np.array(Image.open(path), dtype=np.float32)
