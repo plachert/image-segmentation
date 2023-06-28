@@ -8,7 +8,6 @@ from base_dataset import SegmentationDataset
 from PIL import Image
 from torchvision.datasets import VOCSegmentation
 
-
 DATASETS_PATH = pathlib.Path(
     '/home/piotr/github/image-segmentation/data',
 )
@@ -19,7 +18,7 @@ class VOCSegmentationDataset(SegmentationDataset):
         self,
         transform: Callable | None = None,
         image_set: str = 'train',
-        download: bool = True,
+        download: bool = False,
     ):
         super().__init__(transform)
         dataset_path = DATASETS_PATH.joinpath('VOC')
@@ -69,7 +68,12 @@ class VOCSegmentationDataset(SegmentationDataset):
 
     def _load_mask(self, path: pathlib.Path) -> np.ndarray:
         mask = np.array(Image.open(path), dtype=np.float32)
-        print(mask.shape)
+        # mask = np.expand_dims(mask, axis=-1)
+        mask_without_border = np.where(mask == 255., 0, mask)
+        one_hot = np.eye(self.no_classes)[
+            mask_without_border.astype(int)
+        ].astype(np.float32)
+        return one_hot
 
 
 if __name__ == '__main__':
