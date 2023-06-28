@@ -30,9 +30,3 @@ class VOCDatamodule(SegmentationDataModule):
         self.val_ds, self.test_ds = random_split(
             val_org, [new_val_size, test_size],
         )
-
-
-if __name__ == '__main__':
-    ds = VOCDatamodule()
-    ds.setup('fit')
-    print(ds.train_ds[0])
