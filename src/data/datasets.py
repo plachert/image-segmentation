@@ -4,9 +4,10 @@ import pathlib
 from typing import Callable
 
 import numpy as np
-from base_dataset import SegmentationDataset
 from PIL import Image
 from torchvision.datasets import VOCSegmentation
+
+from .base_dataset import SegmentationDataset
 
 DATASETS_PATH = pathlib.Path(
     '/home/piotr/github/image-segmentation/data',

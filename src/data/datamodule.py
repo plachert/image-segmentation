@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from base_datamodule import SegmentationDataModule
-from datasets import VOCSegmentationDataset
 from torch.utils.data import random_split
+
+from .base_datamodule import SegmentationDataModule
+from .datasets import VOCSegmentationDataset
 
 
 class VOCDatamodule(SegmentationDataModule):

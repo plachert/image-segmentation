@@ -3,9 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 import lightning as L
-from datasets import VOCSegmentationDataset
 from torch.utils.data import DataLoader
-from torch.utils.data import random_split
 
 
 class SegmentationDataModule(L.LightningDataModule):
@@ -25,21 +23,7 @@ class SegmentationDataModule(L.LightningDataModule):
         self.num_workers = num_workers
 
     def setup(self, stage: str):
-        self.train_ds = VOCSegmentationDataset(
-            transform=self.transform,
-            image_set='train',
-            download=False,
-        )
-        val_org = VOCSegmentationDataset(
-            transform=self.transform,
-            image_set='val',
-            download=False,
-        )
-        new_val_size = len(val_org) // 2
-        test_size = len(val_org) - new_val_size
-        self.val_ds, self.test_ds = random_split(
-            val_org, [new_val_size, test_size],
-        )
+        raise NotImplementedError
 
     def train_dataloader(self):
         return DataLoader(
