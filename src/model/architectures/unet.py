@@ -43,12 +43,19 @@ class ContractionBlock(nn.Module):
 class ExpansionBlock(nn.Module):
     def __init__(self, input_chans=1024, output_chans=512):
         super().__init__()
-        self.upsample = nn.ConvTranspose2d(
-            input_chans,
-            output_chans,
-            kernel_size=4,
-            stride=2,
-            padding=1,
+        # self.upsample = nn.ConvTranspose2d(
+        #     input_chans,
+        #     output_chans,
+        #     kernel_size=4,
+        #     stride=2,
+        #     padding=1,
+        # )
+        self.upsample = nn.Sequential(
+            nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+            same_conv2d(
+                input_chans,
+                output_chans,
+            ),
         )
         self.conv_relu = nn.Sequential(
             same_conv2d(
