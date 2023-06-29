@@ -11,7 +11,7 @@ class SegmentationDataModule(L.LightningDataModule):
         self,
         train_transform: Callable | None = None,
         inference_transform: Callable | None = None,
-        train_batch_size: int = 32,
+        train_batch_size: int = 64,
         val_batch_size: int = 32,
         test_batch_size: int = 1,
         num_workers: int = 2,
@@ -35,6 +35,7 @@ class SegmentationDataModule(L.LightningDataModule):
             batch_size=self.train_batch_size,
             num_workers=self.num_workers,
             pin_memory=self.pin_memory,
+            shuffle=True,
         )
 
     def val_dataloader(self):
