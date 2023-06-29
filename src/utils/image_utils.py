@@ -59,10 +59,46 @@ def fig2png(fig):
     return decoded_png
 
 
-def plot_segmentation(image: np.array, mask: np.array, ax: plt.Axes):
+def plot_segmentation_mask(image: np.ndarray, mask: np.array, ax: plt.Axes):
     """Plot segmentation mask on image."""
+    image = 255 * image  # TODO: check the scale
     image = Image.fromarray(image.astype(np.uint8))
     mask = Image.fromarray(mask.astype(np.uint8))
     mask.putpalette(PALETTE)
     blended = blend_with_mask(image, mask, alpha=0.7)
     ax.imshow(blended)
+    ax.axis('off')
+
+
+def plot_segmentation(images: np.ndarray, masks: np.ndarray, classes: list[str]):
+    """Plot a bunch of segmentation masks."""
+    n_classes = len(classes)
+    assert len(images) == len(masks)
+    size = len(images)
+    n_rows = int(np.ceil(np.sqrt(size)))
+    n_cols = n_rows + 1  # +1 for legend
+    fig, axs = plt.subplots(
+        n_rows, n_cols, figsize=(10, 10), layout='constrained',
+    )
+    idx = 0
+    for row in range(len(axs)):
+        for col in range(len(axs[row])):
+            if col == n_cols - 1 or idx >= size:
+                axs[row][col].remove()
+                continue
+            plot_segmentation_mask(images[idx], masks[idx], axs[row][col])
+            idx += 1
+    ax_legend = plt.subplot(1, n_cols+1, (n_cols+1, n_cols+1))
+    ax_legend.axis('off')
+    colors = []
+    for i in range(0, n_classes):
+        colors.append([x/255 for x in PALETTE.palette[(i*3):(i*3+3)]])
+    legend = ax_legend.barh(
+        np.zeros(n_classes),
+        np.zeros(n_classes),
+        tick_label=classes,
+        align='center',
+        color=colors,
+    )
+    plt.legend(legend, classes, loc='center')
+    return fig
