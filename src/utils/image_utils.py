@@ -79,11 +79,12 @@ def plot_segmentation(images: np.ndarray, masks: np.ndarray, classes: list[str])
     n_cols = n_rows + 1  # +1 for legend
 
     fig, axs = plt.subplots(n_rows, n_cols, figsize=(10, 10))
-
+    for ax in np.ravel(axs):
+        ax.axis('off')  # remove axes from all plots
     for idx, (image, mask) in enumerate(zip(images, masks)):
         row = idx // (n_cols - 1)
         col = idx % (n_cols - 1)
-        if col == n_cols - 1 or idx >= size:
+        if col == n_cols - 1:
             axs[row][col].remove()
             continue
         plot_segmentation_mask(image, mask, axs[row][col])
