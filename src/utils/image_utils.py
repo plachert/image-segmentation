@@ -77,28 +77,27 @@ def plot_segmentation(images: np.ndarray, masks: np.ndarray, classes: list[str])
     size = len(images)
     n_rows = int(np.ceil(np.sqrt(size)))
     n_cols = n_rows + 1  # +1 for legend
-    fig, axs = plt.subplots(
-        n_rows, n_cols, figsize=(10, 10), layout='constrained',
-    )
-    idx = 0
-    for row in range(len(axs)):
-        for col in range(len(axs[row])):
-            if col == n_cols - 1 or idx >= size:
-                axs[row][col].remove()
-                continue
-            plot_segmentation_mask(images[idx], masks[idx], axs[row][col])
-            idx += 1
-    ax_legend = plt.subplot(1, n_cols+1, (n_cols+1, n_cols+1))
+
+    fig, axs = plt.subplots(n_rows, n_cols, figsize=(10, 10))
+
+    for idx, (image, mask) in enumerate(zip(images, masks)):
+        row = idx // (n_cols - 1)
+        col = idx % (n_cols - 1)
+        if col == n_cols - 1 or idx >= size:
+            axs[row][col].remove()
+            continue
+        plot_segmentation_mask(image, mask, axs[row][col])
+
+    ax_legend = plt.subplot(1, n_cols, n_cols)
     ax_legend.axis('off')
-    colors = []
-    for i in range(0, n_classes):
-        colors.append([x/255 for x in PALETTE.palette[(i*3):(i*3+3)]])
+    colors = [np.array(PALETTE.palette[i*3:i*3+3]) for i in range(n_classes)]
     legend = ax_legend.barh(
         np.zeros(n_classes),
         np.zeros(n_classes),
         tick_label=classes,
         align='center',
-        color=colors,
+        color=[x/255 for x in colors],
     )
     plt.legend(legend, classes, loc='center')
+
     return fig
