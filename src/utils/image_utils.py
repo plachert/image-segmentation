@@ -78,7 +78,9 @@ def plot_segmentation(images: np.ndarray, masks: np.ndarray, classes: list[str])
     n_rows = int(np.ceil(np.sqrt(size)))
     n_cols = n_rows + 1  # +1 for legend
 
-    fig, axs = plt.subplots(n_rows, n_cols, figsize=(10, 10))
+    fig, axs = plt.subplots(
+        n_rows, n_cols, figsize=(10, 10), layout='constrained',
+    )
     for ax in np.ravel(axs):
         ax.axis('off')  # remove axes from all plots
     for idx, (image, mask) in enumerate(zip(images, masks)):
