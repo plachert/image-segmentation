@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchmetrics
 from utils.image_utils import fig2png
-from utils.image_utils import plot_segmentation
+from utils.image_utils import plot_segmentation_mask
 
 dice = torchmetrics.Dice(num_classes=21)
 
@@ -77,7 +77,7 @@ class SegmentationModel(L.LightningModule):
         fig, axs = plt.subplots(4, 4, figsize=(10, 10))
         axs = np.ravel(axs)
         for i, ax in enumerate(axs):
-            plot_segmentation(image[i, ...], mask[i, ...], ax)
+            plot_segmentation_mask(image[i, ...], mask[i, ...], ax)
         image = fig2png(fig)
         tensorboard.add_image(
             'test_train', image, self.current_epoch, dataformats='HWC',
@@ -91,7 +91,7 @@ class SegmentationModel(L.LightningModule):
         fig, axs = plt.subplots(4, 4, figsize=(10, 10))
         axs = np.ravel(axs)
         for i, ax in enumerate(axs):
-            plot_segmentation(image[i, ...], mask[i, ...], ax)
+            plot_segmentation_mask(image[i, ...], mask[i, ...], ax)
         image = fig2png(fig)
         tensorboard.add_image(
             'test_val', image, self.current_epoch, dataformats='HWC',
